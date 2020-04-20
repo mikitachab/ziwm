@@ -1,0 +1,18 @@
+name: CI
+on: [push]
+
+jobs:
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Set Up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.7'
+      - name: Install linter reqs
+        run: pip install -r requirements-lint.txt
+      - name: Run linter
+        run: |
+          flake8 .
