@@ -1,6 +1,8 @@
 import os
 
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+from constants import BASE_DIR
+
+
 DATASET_DIR = os.path.join(BASE_DIR, 'dataset')
 DATASET_CSV_FILENAME = os.path.join(DATASET_DIR, 'ILPD.csv')
 
