@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 from features_ranking import make_features_ranking
+from experiment import prepare_experiment as pe
 import ilpd
 
 
@@ -8,6 +9,7 @@ def argparse_setup():
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
     subparsers.add_parser('prepare-data').set_defaults(func=ilpd.prepare_data)
+    subparsers.add_parser('run-experiment').set_defaults(func=run_experiment)
     ranking_parser = subparsers.add_parser('features-ranking')
     ranking_parser.set_defaults(func=rank_features)
     ranking_parser.add_argument('--latex', action='store_true')
@@ -27,6 +29,12 @@ def main():
     else:
         parser.print_help()
 
+
+def run_experiment():
+    exp = pe(ilpd.get_data(normalized=True))
+    exp.run_experiment()
+    result = exp.get_results()
+    print(result)
 
 def rank_features(latex=False):
     data = ilpd.get_data(normalized=True)
