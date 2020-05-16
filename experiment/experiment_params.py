@@ -17,8 +17,9 @@ class ExperimentParams:
 
     def get_param_grid(self):
         return {
-            'n_neighbors': self.n_neighbors,
-            'metric': self.metrics,
+            'model__n_neighbors': self.n_neighbors,
+            'model__metric': self.metrics,
+            'selector__k': range(1, len(self.attributes) + 1)
         }
 
     def get_cv_params(self):
