@@ -6,7 +6,7 @@ from sklearn.model_selection import GridSearchCV, RepeatedStratifiedKFold
 from sklearn.pipeline import Pipeline
 
 from .experiment_params import get_experiment_params
-from .constants import PREDEFINED_N_NEIGHBORS, PREDEFINED_METRICS
+from .constants import CV_RANDOM_STATE, PREDEFINED_N_NEIGHBORS, PREDEFINED_METRICS
 
 from features_ranking import make_features_ranking
 
@@ -42,7 +42,7 @@ def prepare_experiment(dataset, predefined_params=True):
         param_grid['model__n_neighbors'] = PREDEFINED_N_NEIGHBORS
         param_grid['model__metric'] = PREDEFINED_METRICS
 
-    cv = RepeatedStratifiedKFold(n_splits=n_splits, n_repeats=n_repeats)
+    cv = RepeatedStratifiedKFold(n_splits=n_splits, n_repeats=n_repeats, random_state=CV_RANDOM_STATE)
 
     return Experiment(pipe, data, target, param_grid, cv)
 
