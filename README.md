@@ -11,7 +11,7 @@
 
 ## Setup
 
-```shell 
+```shell
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
@@ -20,7 +20,7 @@ pip install -r requirements.txt
 ## Usage
 
 - Download and prepare dataset
-  
+
 ```shell
 ./main.py prepare-data
 ```
@@ -33,8 +33,20 @@ print ranking
 ./main.py features-ranking
 ```
 
-or print rankning as latex table
+or print ranking as latex table
 
 ```shell
 ./main.py features-ranking --latex
+```
+
+run experiment
+
+```shell
+./main.py run
+```
+
+run experiment and generate resutls plots
+
+```shell
+./main.py run --make-plots
 ```
