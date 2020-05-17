@@ -12,7 +12,7 @@ from features_ranking import make_features_ranking
 
 
 def prepare_data(dataset, order_by_feature_score=True):
-    data = dataset.iloc[:, 0:len(dataset.columns)]
+    data = dataset.iloc[:, 0:len(dataset.columns) - 1]
     target = dataset.iloc[:, len(dataset.columns) - 1]
 
     if order_by_feature_score:
