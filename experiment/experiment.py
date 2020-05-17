@@ -7,6 +7,7 @@ from sklearn.pipeline import Pipeline
 
 from .experiment_params import get_experiment_params
 from .constants import CV_RANDOM_STATE, PREDEFINED_N_NEIGHBORS, PREDEFINED_METRICS
+from .params_scores import get_params_scores
 
 from features_ranking import make_features_ranking
 
@@ -58,4 +59,5 @@ class Experiment:
         self.grid_search.fit(self.data, self.target)
 
     def get_results(self):
-        return pd.DataFrame(self.grid_search.cv_results_)
+        cv_results = pd.DataFrame(self.grid_search.cv_results_)
+        return get_params_scores(cv_results, len(self.attributes))
