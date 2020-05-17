@@ -36,6 +36,7 @@ def run_experiment():
     result = exp.get_results()
     print(result)
 
+
 def rank_features(latex=False):
     data = ilpd.get_data(normalized=True)
     x = data.drop('Selector', axis=1)

@@ -55,7 +55,6 @@ class Experiment:
         self.grid_search = GridSearchCV(pipe, param_grid=params, cv=cv)
 
     def run_experiment(self):
-
         self.grid_search.fit(self.data, self.target)
 
     def get_results(self):
