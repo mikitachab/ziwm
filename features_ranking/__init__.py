@@ -1,5 +1,5 @@
-from .features_ranking import make_features_ranking
+from .features_ranking import FeaturesRanking
 
 __all__ = [
-    'make_features_ranking',
+    'FeaturesRanking',
 ]

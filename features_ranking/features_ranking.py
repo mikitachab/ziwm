@@ -7,19 +7,18 @@ import pandas as pd
 FeatureScore = collections.namedtuple('FeatureScore', 'name, score')
 
 
-def make_features_ranking(x, y):
-    k_best_selector = SelectKBest(score_func=chi2, k='all')
-    k_best_selector.fit(x, y)
-    scores = k_best_selector.scores_
-    features_scores = [
-        FeatureScore(name, score)
-        for name, score in zip(x.columns, scores)
-    ]
-    return FeaturesRanking(features_scores)
-
-
 class FeaturesRanking:
-    def __init__(self, features_scores):
+    def __init__(self, features_scores=None, score_func=chi2):
+        self.features_scores = features_scores
+        self.selector = SelectKBest(score_func=score_func, k='all')
+
+    def fit(self, x, y):
+        self.selector.fit(x, y)
+        scores = self.selector.scores_
+        features_scores = [
+            FeatureScore(name, round(score, 2))
+            for name, score in zip(x.columns, scores)
+        ]
         self.features_scores = sorted(features_scores, key=lambda s: s.score, reverse=True)
 
     def to_dataframe(self):
@@ -35,3 +34,6 @@ class FeaturesRanking:
     def __str__(self):
         df = self.to_dataframe()
         return tabulate(df, headers=df.columns)
+
+    def __getitem__(self, index):
+        return self.features_scores[index]
