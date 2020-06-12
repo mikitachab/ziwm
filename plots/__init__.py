@@ -1,35 +1,32 @@
 import os
 
 import matplotlib.pyplot as plt
-import pandas as pd
 import seaborn as sns
+from sklearn.metrics import plot_confusion_matrix as sk_plot_confusion_matrix
 
 from constants import PLOTS_DIR
 
 
-def plot_params_scores(scores):
+def plot_params_scores(results):
     os.makedirs(PLOTS_DIR, exist_ok=True)
 
-    for score in scores:
-        plot_score(score)
-
-
-def plot_score(score):
+    _, ax = plt.subplots()
     plt.figure(figsize=(12, 6))
-    sns.scatterplot(
-        data=pd.DataFrame(dict(
-            k=score.k,
-            scores=score.scores
-        )),
-        x='k',
-        y='scores'
+    sns.lineplot(
+        data=results,
+        x='param_selector__k',
+        y='mean_test_score',
+        hue='params_key',
+        legend=False
     )
-    title = f'metric: {score.metric} n_neighbors: {score.n_neighbors}'
-    plt.title(title)
-    plt.ylabel('accuracy')
-    plt.savefig(make_plot_filename(score))
+    plt.ylim(0.7, 1)
+    plt.xlabel('Attributes number')
+    plt.ylabel('f1-score')
+    plt.legend(title='Parameters', loc='upper right', labels=results['params_key'].unique())
+    plt.savefig(os.path.join(PLOTS_DIR, 'scores.png'))
 
 
-def make_plot_filename(score):
-    plot_title = f'metric_{score.metric}_n_neighbors:_{score.n_neighbors}.png'
-    return os.path.join(PLOTS_DIR, plot_title)
+def plot_confusion_matrix(estimator, x, y_true):
+    os.makedirs(PLOTS_DIR, exist_ok=True)
+    sk_plot_confusion_matrix(estimator, x, y_true, values_format='d', cmap=plt.cm.Blues)
+    plt.savefig(os.path.join(PLOTS_DIR, 'cm.png'))
