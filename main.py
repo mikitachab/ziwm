@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 import argparse
-from pprint import pprint
 
 from features_ranking import make_features_ranking
 from experiment import prepare_experiment as pe
 import ilpd
-from plots import plot_params_scores
 
 
 def argparse_setup():
@@ -39,12 +37,10 @@ def main():
 
 def run_experiment(make_plots=False):
     exp = pe(ilpd.get_data(normalized=True))
-    exp.run_experiment()
+    exp.run_experiment(make_plots=make_plots)
     result = exp.get_results()
-    pprint(result)
-
-    if make_plots:
-        plot_params_scores(result)
+    print('best score:', result.best_score)
+    print('best params:', result.best_params)
 
 
 def rank_features(latex=False):
