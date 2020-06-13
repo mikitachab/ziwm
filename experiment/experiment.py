@@ -2,6 +2,8 @@ from collections import namedtuple
 
 import pandas as pd
 
+from scipy import stats
+
 from sklearn.feature_selection import chi2, SelectKBest
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import GridSearchCV, RepeatedStratifiedKFold
@@ -69,14 +71,62 @@ class Experiment:
         self.grid_search.fit(self.data, self.target)
         cv_results = pd.DataFrame(self.grid_search.cv_results_)
         cv_results['params_key'] = cv_results['params'].apply(_make_params_key)
+
         self.result = ExperimentResult(
             results=cv_results,
             best_params=self.grid_search.best_params_,
             best_score=self.grid_search.best_score_,
         )
+
+        self.t_test(cv_results, self.grid_search.best_params_)
+
         if make_plots:
             plots.plot_confusion_matrix(self.grid_search.best_estimator_, self.data, self.target)
             plots.plot_params_scores(cv_results)
+
+    def t_test(self, cv_results, best_params):
+        t_test_data = self.prepare_t_test_data(cv_results, best_params)
+        best_model_id = t_test_data['best_model_id']
+        best_model = t_test_data['models'][best_model_id]
+
+        results = []
+        for model in t_test_data['models']:
+            if model['id'] != best_model_id:
+                t_test_result = stats.ttest_ind(best_model['data'], model['data'])
+                results.append({
+                    'model_1': best_model['params'],
+                    'model_1_score': best_model['score'],
+                    'model_2': model['params'],
+                    'model_2_score': model['score'],
+                    't_test_result': t_test_result
+                })
+        print(results)
+
+    def prepare_t_test_data(self, cv_results, best_params):
+        print(cv_results)
+        splits = [column for column in cv_results.columns if 'split' in column]
+        model_data = []
+        best_params_id = None
+
+        for i in range(len(cv_results['params'])):
+            split_data = []
+            for split in splits:
+                split_data.append(cv_results[split][i])
+
+            params = cv_results['params'][i]
+            if params == best_params:
+                best_params_id = i
+            model_data.append({
+                'id': i,
+                'params': params,
+                'score': cv_results['mean_test_score'][i],
+                'data': split_data
+            })
+
+        return {
+            'best_model_id': best_params_id,
+            'models': model_data
+        }
 
     def get_results(self):
         return self.result
